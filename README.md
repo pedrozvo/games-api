@@ -15,12 +15,19 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 
 ## 📦 Requisitos Previos
 
+### Opción 1: Con Docker (Recomendado)
+- Docker Desktop
+- Docker Compose
+
+### Opción 2: Sin Docker
 - PHP 8.2 o superior
 - Composer
 - Node.js y NPM
 - Base de datos (SQLite, MySQL, PostgreSQL, etc.)
 
-## 🚀 Instalación
+## 🚀 Instalación Local (sin Docker)
+
+Si prefieres usar Docker, ve a la sección [🐳 Instalación con Docker](#-instalación-con-docker-recomendado).
 
 ### 1. Clonar el repositorio
 
@@ -65,9 +72,110 @@ php artisan migrate
 npm run build
 ```
 
+## 🐳 Instalación con Docker (Recomendado)
+
+Docker proporciona un entorno consistente y fácil de configurar sin necesidad de instalar PHP, Composer o MySQL localmente.
+
+### Requisitos
+- Docker Desktop instalado
+- Docker Compose
+
+### 1. Clonar el repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd games-api
+```
+
+### 2. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+Edita el archivo `.env` y configura las siguientes variables para Docker:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=games_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+### 3. Construir y levantar los contenedores
+
+```bash
+docker-compose up -d --build
+```
+
+Este comando:
+- Construye la imagen de Docker para Laravel
+- Levanta los siguientes contenedores:
+  - **app**: Aplicación Laravel (PHP-FPM)
+  - **nginx**: Servidor web (puerto 8000)
+  - **db**: Base de datos MySQL (puerto 3306)
+  - **phpmyadmin**: Administrador de base de datos (puerto 8080)
+
+### 4. Instalar dependencias y configurar la aplicación
+
+```bash
+# Generar clave de aplicación
+docker-compose exec app php artisan key:generate
+
+# Ejecutar migraciones
+docker-compose exec app php artisan migrate
+
+# (Opcional) Ejecutar seeders
+docker-compose exec app php artisan db:seed
+```
+
+### 5. Acceder a la aplicación
+
+- **API**: http://localhost:8000/api/games
+- **phpMyAdmin**: http://localhost:8080 (usuario: `laravel`, contraseña: `secret`)
+
+### Comandos útiles de Docker
+
+```bash
+# Ver logs de la aplicación
+docker-compose logs -f app
+
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ejecutar comandos Artisan
+docker-compose exec app php artisan [comando]
+
+# Acceder al contenedor
+docker-compose exec app bash
+
+# Ejecutar tests
+docker-compose exec app php artisan test
+
+# Detener los contenedores
+docker-compose stop
+
+# Detener y eliminar contenedores
+docker-compose down
+
+# Detener y eliminar contenedores con volúmenes (¡cuidado! elimina la BD)
+docker-compose down -v
+```
+
+### Estructura de servicios Docker
+
+| Servicio | Puerto | Descripción |
+|----------|--------|-------------|
+| nginx | 8000 | Servidor web principal |
+| app | 9000 | Aplicación PHP-FPM |
+| db | 3306 | Base de datos MySQL |
+| phpmyadmin | 8080 | Administrador de base de datos |
+
 ## 🎯 Uso
 
-### Iniciar servidor de desarrollo
+### Iniciar servidor de desarrollo (sin Docker)
 
 ```bash
 composer dev
@@ -245,6 +353,8 @@ Este endpoint requiere autenticación mediante token Bearer.
 
 Principales variables a configurar en `.env`:
 
+### Para desarrollo local (sin Docker):
+
 ```env
 APP_NAME="Games API"
 APP_ENV=local
@@ -262,6 +372,24 @@ DB_DATABASE=/ruta/absoluta/a/database.sqlite
 # DB_USERNAME=root
 # DB_PASSWORD=
 ```
+
+### Para Docker:
+
+```env
+APP_NAME="Games API"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=games_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+**Nota**: En Docker, `DB_HOST=db` hace referencia al nombre del servicio de base de datos definido en `docker-compose.yml`.
 
 ## 📝 Notas de Desarrollo
 
