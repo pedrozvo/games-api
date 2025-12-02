@@ -1,59 +1,284 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎮 Games API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST desarrollada con Laravel para la gestión de videojuegos.
 
-## About Laravel
+## 📋 Descripción
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints para crear y listar juegos con información como título, descripción, género y plataforma.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tecnologías
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP**: ^8.2
+- **Laravel**: ^12.0
+- **Laravel Sanctum**: ^4.0 (Autenticación API)
+- **Base de datos**: SQLite/MySQL (configurable)
 
-## Learning Laravel
+## 📦 Requisitos Previos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2 o superior
+- Composer
+- Node.js y NPM
+- Base de datos (SQLite, MySQL, PostgreSQL, etc.)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Instalación
 
-## Laravel Sponsors
+### 1. Clonar el repositorio
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <url-del-repositorio>
+cd games-api
+```
 
-### Premium Partners
+### 2. Instalación automática
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer setup
+```
 
-## Contributing
+Este comando ejecutará:
+- Instalación de dependencias de Composer
+- Copia del archivo `.env.example` a `.env`
+- Generación de la clave de aplicación
+- Ejecución de migraciones
+- Instalación de dependencias de NPM
+- Compilación de assets
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Configuración manual (alternativa)
 
-## Code of Conduct
+```bash
+# Instalar dependencias
+composer install
+npm install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Configurar entorno
+cp .env.example .env
+php artisan key:generate
 
-## Security Vulnerabilities
+# Configurar base de datos en .env
+# DB_CONNECTION=sqlite
+# DB_DATABASE=/ruta/absoluta/a/database.sqlite
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Ejecutar migraciones
+php artisan migrate
 
-## License
+# Compilar assets
+npm run build
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🎯 Uso
+
+### Iniciar servidor de desarrollo
+
+```bash
+composer dev
+```
+
+Este comando iniciará simultáneamente:
+- Servidor PHP (puerto 8000)
+- Cola de trabajos
+- Logs en tiempo real
+- Servidor Vite para assets
+
+### Iniciar servidor individualmente
+
+```bash
+php artisan serve
+```
+
+La API estará disponible en `http://localhost:8000`
+
+## 📡 Endpoints
+
+### Base URL
+```
+http://localhost:8000/api
+```
+
+### 1. Listar todos los juegos
+
+**Endpoint:** `GET /api/games`
+
+**Respuesta exitosa (200):**
+```json
+[
+    {
+        "id": 1,
+        "title": "The Legend of Zelda: Breath of the Wild",
+        "description": "Juego de aventura y acción en mundo abierto",
+        "genre": "Aventura",
+        "platform": "Nintendo Switch",
+        "created_at": "2025-11-30T19:20:30.000000Z",
+        "updated_at": "2025-11-30T19:20:30.000000Z"
+    }
+]
+```
+
+### 2. Crear un nuevo juego
+
+**Endpoint:** `POST /api/games`
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+    "title": "The Legend of Zelda: Breath of the Wild",
+    "description": "Juego de aventura y acción en mundo abierto",
+    "genre": "Aventura",
+    "platform": "Nintendo Switch"
+}
+```
+
+**Respuesta exitosa (201):**
+```json
+{
+    "id": 1,
+    "title": "The Legend of Zelda: Breath of the Wild",
+    "description": "Juego de aventura y acción en mundo abierto",
+    "genre": "Aventura",
+    "platform": "Nintendo Switch",
+    "created_at": "2025-11-30T19:20:30.000000Z",
+    "updated_at": "2025-11-30T19:20:30.000000Z"
+}
+```
+
+**Validaciones:**
+- `title`: Requerido
+- `description`: Opcional
+- `genre`: Requerido
+- `platform`: Requerido
+
+## 🗄️ Estructura de la Base de Datos
+
+### Tabla: games
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | BIGINT | Identificador único (autoincremental) |
+| title | VARCHAR(255) | Título del juego |
+| description | TEXT | Descripción del juego |
+| genre | VARCHAR(255) | Género (RPG, FPS, Aventura, etc.) |
+| platform | VARCHAR(255) | Plataforma (PC, Switch, PlayStation, etc.) |
+| created_at | TIMESTAMP | Fecha de creación |
+| updated_at | TIMESTAMP | Fecha de última actualización |
+
+## 🧪 Testing
+
+### Ejecutar tests
+
+```bash
+composer test
+```
+
+O directamente:
+
+```bash
+php artisan test
+```
+
+### Tests disponibles
+
+Los tests se encuentran en `tests/Feature/Api/GameTest.php` y verifican:
+- Listado de juegos
+- Creación de juegos
+- Validaciones
+
+## 📁 Estructura del Proyecto
+
+```
+games-api/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       └── Api/
+│   │           └── GameController.php
+│   └── Models/
+│       └── Game.php
+├── database/
+│   ├── migrations/
+│   │   └── 2025_11_30_191417_create_games_table.php
+│   └── seeders/
+├── routes/
+│   └── api.php
+└── tests/
+    └── Feature/
+        └── Api/
+            └── GameTest.php
+```
+
+## 🔧 Scripts Disponibles
+
+```bash
+# Setup completo del proyecto
+composer setup
+
+# Iniciar entorno de desarrollo
+composer dev
+
+# Ejecutar tests
+composer test
+
+# Linter de código (PHP)
+./vendor/bin/pint
+
+# Compilar assets para producción
+npm run build
+
+# Modo desarrollo de assets
+npm run dev
+```
+
+## 🔐 Autenticación (Sanctum)
+
+El proyecto incluye Laravel Sanctum para autenticación API. Ejemplo de endpoint protegido:
+
+```
+GET /api/user
+```
+
+Este endpoint requiere autenticación mediante token Bearer.
+
+## 🌍 Variables de Entorno
+
+Principales variables a configurar en `.env`:
+
+```env
+APP_NAME="Games API"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=sqlite
+DB_DATABASE=/ruta/absoluta/a/database.sqlite
+
+# O para MySQL:
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=games_db
+# DB_USERNAME=root
+# DB_PASSWORD=
+```
+
+## 📝 Notas de Desarrollo
+
+- Los modelos utilizan mass assignment con `$fillable`
+- Las migraciones incluyen timestamps automáticos
+- Se recomienda usar SQLite para desarrollo local
+- El proyecto incluye GitHub Actions para CI/CD (opcional)
+
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
+
+## 👨‍💻 Autor
+
+Desarrollado para el curso de Transformación Digital - Inacap
+
+---
+
+**¿Problemas?** Abre un issue en el repositorio o contacta al equipo de desarrollo.
