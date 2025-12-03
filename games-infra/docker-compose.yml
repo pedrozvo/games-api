@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Servicio 1: Tu API (Descargada desde Docker Hub)
+  app:
+    image: pedrozvodevs/games-api:latest  # <--- Tu imagen creada automáticamente
+    container_name: games_api
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: games_api
+      DB_USERNAME: user
+      DB_PASSWORD: userpassword
+    depends_on:
+      - db
+    networks:
+      - games-network
+
+  # Servicio 2: Base de Datos (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: games_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: games_api
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - games-network
+
+networks:
+  games-network:
+    driver: bridge
+
+volumes:
+  db_data:
