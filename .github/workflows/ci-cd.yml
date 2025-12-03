@@ -1,0 +1,65 @@
+name: Laravel CI/CD Pipeline
+
+# ESTA ES LA SECCIÓN QUE TE FALTABA O ESTABA MAL
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # --- TRABAJO 1: TEST & CALIDAD ---
+  test-and-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, bcmath
+
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Copy .env
+      run: cp .env.example .env
+
+    - name: Generate Key
+      run: php artisan key:generate
+
+    - name: Run Tests (PHPUnit)
+      run: php artisan test
+
+    - name: Run PHPStan
+      run: vendor/bin/phpstan analyse app --level=1 || true
+
+  # --- TRABAJO 2: BUILD & SCAN ---
+  build-and-push:
+    needs: test-and-quality
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/games-api:latest
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '${{ secrets.DOCKER_USERNAME }}/games-api:latest'
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
