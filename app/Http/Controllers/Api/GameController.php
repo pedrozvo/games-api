@@ -29,4 +29,53 @@ class GameController extends Controller
 
         return response()->json($game, 201);
     }
+
+    // 3. GET /api/games/{id} (Obtener por ID)
+    public function show($id)
+    {
+        $game = Game::find($id);
+
+        if (!$game) {
+            return response()->json(['message' => 'Juego no encontrado'], 404);
+        }
+
+        return response()->json($game, 200);
+    }
+
+    // 4. PUT /api/games/{id} (Actualizar)
+    public function update(Request $request, $id)
+    {
+        $game = Game::find($id);
+
+        if (!$game) {
+            return response()->json(['message' => 'Juego no encontrado'], 404);
+        }
+
+        // Validación
+        $request->validate([
+            'title' => 'sometimes|required',
+            'genre' => 'sometimes|required',
+            'platform' => 'sometimes|required',
+            'description' => 'nullable'
+        ]);
+
+        // Actualizar
+        $game->update($request->all());
+
+        return response()->json($game, 200);
+    }
+
+    // 5. DELETE /api/games/{id} (Eliminar)
+    public function destroy($id)
+    {
+        $game = Game::find($id);
+
+        if (!$game) {
+            return response()->json(['message' => 'Juego no encontrado'], 404);
+        }
+
+        $game->delete();
+
+        return response()->json(['message' => 'Juego eliminado correctamente'], 200);
+    }
 }
