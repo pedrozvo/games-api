@@ -4,78 +4,55 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Game;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreGameRequest;
+use App\Http\Requests\UpdateGameRequest;
+use Illuminate\Http\JsonResponse;
 
 class GameController extends Controller
 {
-    // 1. GET /api/games (Listar todos)
-    public function index()
+    /**
+     * Display a listing of the games.
+     */
+    public function index(): JsonResponse
     {
-        return response()->json(Game::all(), 200);
+        $games = Game::all();
+        return response()->json($games, 200);
     }
 
-    // 2. POST /api/games (Crear uno nuevo)
-    public function store(Request $request)
+    /**
+     * Store a newly created game in storage.
+     */
+    public function store(StoreGameRequest $request): JsonResponse
     {
-        // Validación simple
-        $request->validate([
-            'title' => 'required',
-            'genre' => 'required',
-            'platform' => 'required'
-        ]);
-
-        // Crear juego
-        $game = Game::create($request->all());
-
+        $game = Game::create($request->validated());
         return response()->json($game, 201);
     }
 
-    // 3. GET /api/games/{id} (Obtener por ID)
-    public function show($id)
+    /**
+     * Display the specified game.
+     */
+    public function show(Game $game): JsonResponse
     {
-        $game = Game::find($id);
-
-        if (!$game) {
-            return response()->json(['message' => 'Juego no encontrado'], 404);
-        }
-
         return response()->json($game, 200);
     }
 
-    // 4. PUT /api/games/{id} (Actualizar)
-    public function update(Request $request, $id)
+    /**
+     * Update the specified game in storage.
+     */
+    public function update(UpdateGameRequest $request, Game $game): JsonResponse
     {
-        $game = Game::find($id);
-
-        if (!$game) {
-            return response()->json(['message' => 'Juego no encontrado'], 404);
-        }
-
-        // Validación
-        $request->validate([
-            'title' => 'sometimes|required',
-            'genre' => 'sometimes|required',
-            'platform' => 'sometimes|required',
-            'description' => 'nullable'
-        ]);
-
-        // Actualizar
-        $game->update($request->all());
-
+        $game->update($request->validated());
         return response()->json($game, 200);
     }
 
-    // 5. DELETE /api/games/{id} (Eliminar)
-    public function destroy($id)
+    /**
+     * Remove the specified game from storage.
+     */
+    public function destroy(Game $game): JsonResponse
     {
-        $game = Game::find($id);
-
-        if (!$game) {
-            return response()->json(['message' => 'Juego no encontrado'], 404);
-        }
-
         $game->delete();
-
-        return response()->json(['message' => 'Juego eliminado correctamente'], 200);
+        return response()->json([
+            'message' => 'Juego eliminado correctamente'
+        ], 200);
     }
 }

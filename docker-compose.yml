@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: games-api
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/database.sqlite
+    networks:
+      - games-network
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: games-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: games_api
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: games_user
+      MYSQL_PASSWORD: games_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - games-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: games-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: secret
+    networks:
+      - games-network
+    depends_on:
+      - mysql
+
+networks:
+  games-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
