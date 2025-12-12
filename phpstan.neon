@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+    
+    # Nivel de análisis (0-9, siendo 9 el más estricto)
+    # Se recomienda empezar con nivel 5 y subir gradualmente
+    level: 5
+    
+    # Ignorar errores en directorios de vendor y bootstrap
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+        
+    # Reportar errores incluso si hay baseline
+    reportUnmatchedIgnoredErrors: false
+
