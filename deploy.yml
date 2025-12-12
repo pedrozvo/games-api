@@ -1,0 +1,31 @@
+---
+- name: Desplegar Games API
+  hosts: webservers
+  become: yes
+
+  tasks:
+    # 1. Asegurar que docker-compose esté instalado (Evita el error "command not found")
+    - name: Instalar docker-compose
+      apt:
+        name: docker-compose
+        state: present
+        update_cache: yes
+
+    # 2. Copiar el archivo
+    - name: Copiar docker-compose.yml
+      copy:
+        src: ./docker-compose.yml
+        dest: "{{ ansible_env.HOME }}/docker-compose.yml"
+        mode: '0644'
+
+    # 3. Descargar la imagen (Con GUION, para compatibilidad)
+    - name: Hacer pull de la imagen
+      shell: docker-compose pull
+      args:
+        chdir: "{{ ansible_env.HOME }}/"
+
+    # 4. Levantar los contenedores (Con GUION)
+    - name: Levantar servicios
+      shell: docker-compose up -d
+      args:
+        chdir: "{{ ansible_env.HOME }}/"

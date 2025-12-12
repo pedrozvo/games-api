@@ -1,3 +1,49 @@
+<<<<<<< HEAD
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Node
+node_modules
+npm-debug.log
+
+# Laravel
+/vendor
+/storage/*.key
+/public/hot
+/public/storage
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+/tests
+phpunit.xml
+.phpunit.result.cache
+
+# Documentation
+README.md
+
+=======
 .git
 .env
 vendor
@@ -6,3 +52,4 @@ storage/*.key
 tests
 phpunit.xml
 README.md
+>>>>>>> 2f41206dbc20f05e68753f88e81b51aa89a8ffd2

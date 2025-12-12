@@ -3,6 +3,7 @@
 API REST desarrollada con Laravel para la gestión de videojuegos con CI/CD automatizado.
 
 ![Laravel CI/CD](https://github.com/pedrozvo/games-api/workflows/Laravel%20CI/CD/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=games-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=games-api)
 
 ## 📋 Descripción
 
@@ -14,6 +15,8 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 - ✅ CI/CD con GitHub Actions
 - ✅ Factory para generación de datos de prueba
 - ✅ Documentación completa con Postman
+- ✅ Análisis estático con PHPStan/Larastan
+- ✅ Análisis de calidad con SonarQube/SonarCloud
 
 ## 🛠️ Tecnologías
 
@@ -23,16 +26,25 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 - **PHPUnit**: ^11.5 (Testing)
 - **SQLite/MySQL**: Base de datos configurable
 - **GitHub Actions**: CI/CD automatizado
+- **PHPStan/Larastan**: ^3.8 (Análisis estático)
+- **SonarQube**: Análisis de calidad de código
 
 ## 📦 Requisitos Previos
 
+### Opción 1: Con Docker (Recomendado)
+- Docker Desktop
+- Docker Compose
+
+### Opción 2: Sin Docker
 - PHP 8.2 o superior
 - Composer
 - Node.js y NPM (opcional para frontend)
 - SQLite o MySQL
 - Git
 
-## 🚀 Instalación
+## 🚀 Instalación Local (sin Docker)
+
+Si prefieres usar Docker, ve a la sección [🐳 Instalación con Docker](#-instalación-con-docker-recomendado).
 
 ### Opción A: Con Docker (Recomendado) 🐳
 
@@ -170,6 +182,46 @@ curl -X POST http://localhost:8000/api/games \
   "updated_at": "2025-12-11T10:30:00.000000Z"
 }
 ```
+
+## 🔍 Análisis de Calidad de Código
+
+### PHPStan - Análisis Estático
+
+PHPStan analiza el código sin ejecutarlo para encontrar errores de tipos, métodos inexistentes, y problemas de lógica.
+
+```bash
+# Ejecutar análisis
+composer phpstan
+
+# Generar baseline (ignorar errores existentes)
+composer phpstan-baseline
+```
+
+Ver [PHPSTAN.md](PHPSTAN.md) para más detalles.
+
+### SonarQube - Métricas de Calidad
+
+SonarQube proporciona análisis completo de calidad, detectando bugs, vulnerabilidades, code smells y métricas.
+
+#### Opción 1: SonarCloud (En la nube)
+1. Registrarse en [sonarcloud.io](https://sonarcloud.io)
+2. Conectar el repositorio de GitHub
+3. Agregar `SONAR_TOKEN` en GitHub Secrets
+4. Los análisis se ejecutan automáticamente con cada push
+
+#### Opción 2: SonarQube Local (Con Docker)
+```bash
+# Levantar SonarQube
+docker-compose -f docker-compose.sonar.yml up -d
+
+# Acceder a http://localhost:9000
+# Usuario: admin / Contraseña: admin
+
+# Ejecutar análisis
+sonar-scanner -Dsonar.login=TU_TOKEN
+```
+
+Ver [SONARQUBE.md](SONARQUBE.md) para instrucciones completas.
 
 ## 🧪 Testing
 
@@ -358,9 +410,110 @@ php artisan migrate
 npm run build
 ```
 
+## 🐳 Instalación con Docker (Recomendado)
+
+Docker proporciona un entorno consistente y fácil de configurar sin necesidad de instalar PHP, Composer o MySQL localmente.
+
+### Requisitos
+- Docker Desktop instalado
+- Docker Compose
+
+### 1. Clonar el repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd games-api
+```
+
+### 2. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+Edita el archivo `.env` y configura las siguientes variables para Docker:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=games_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+### 3. Construir y levantar los contenedores
+
+```bash
+docker-compose up -d --build
+```
+
+Este comando:
+- Construye la imagen de Docker para Laravel
+- Levanta los siguientes contenedores:
+  - **app**: Aplicación Laravel (PHP-FPM)
+  - **nginx**: Servidor web (puerto 8000)
+  - **db**: Base de datos MySQL (puerto 3306)
+  - **phpmyadmin**: Administrador de base de datos (puerto 8080)
+
+### 4. Instalar dependencias y configurar la aplicación
+
+```bash
+# Generar clave de aplicación
+docker-compose exec app php artisan key:generate
+
+# Ejecutar migraciones
+docker-compose exec app php artisan migrate
+
+# (Opcional) Ejecutar seeders
+docker-compose exec app php artisan db:seed
+```
+
+### 5. Acceder a la aplicación
+
+- **API**: http://localhost:8000/api/games
+- **phpMyAdmin**: http://localhost:8080 (usuario: `laravel`, contraseña: `secret`)
+
+### Comandos útiles de Docker
+
+```bash
+# Ver logs de la aplicación
+docker-compose logs -f app
+
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ejecutar comandos Artisan
+docker-compose exec app php artisan [comando]
+
+# Acceder al contenedor
+docker-compose exec app bash
+
+# Ejecutar tests
+docker-compose exec app php artisan test
+
+# Detener los contenedores
+docker-compose stop
+
+# Detener y eliminar contenedores
+docker-compose down
+
+# Detener y eliminar contenedores con volúmenes (¡cuidado! elimina la BD)
+docker-compose down -v
+```
+
+### Estructura de servicios Docker
+
+| Servicio | Puerto | Descripción |
+|----------|--------|-------------|
+| nginx | 8000 | Servidor web principal |
+| app | 9000 | Aplicación PHP-FPM |
+| db | 3306 | Base de datos MySQL |
+| phpmyadmin | 8080 | Administrador de base de datos |
+
 ## 🎯 Uso
 
-### Iniciar servidor de desarrollo
+### Iniciar servidor de desarrollo (sin Docker)
 
 ```bash
 composer dev
@@ -538,6 +691,8 @@ Este endpoint requiere autenticación mediante token Bearer.
 
 Principales variables a configurar en `.env`:
 
+### Para desarrollo local (sin Docker):
+
 ```env
 APP_NAME="Games API"
 APP_ENV=local
@@ -555,6 +710,24 @@ DB_DATABASE=/ruta/absoluta/a/database.sqlite
 # DB_USERNAME=root
 # DB_PASSWORD=
 ```
+
+### Para Docker:
+
+```env
+APP_NAME="Games API"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=games_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+**Nota**: En Docker, `DB_HOST=db` hace referencia al nombre del servicio de base de datos definido en `docker-compose.yml`.
 
 ## 📝 Notas de Desarrollo
 
