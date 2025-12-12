@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Game;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Game;
 
 class GameTest extends TestCase
 {
@@ -23,7 +23,7 @@ class GameTest extends TestCase
 
         // Verificar respuesta
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+            ->assertJsonCount(3);
     }
 
     /**
@@ -35,27 +35,27 @@ class GameTest extends TestCase
             'title' => 'The Legend of Zelda',
             'description' => 'Epic adventure game',
             'genre' => 'Adventure',
-            'platform' => 'Nintendo Switch'
+            'platform' => 'Nintendo Switch',
         ];
 
         $response = $this->postJson('/api/games', $gameData);
 
         $response->assertStatus(201)
-                 ->assertJsonFragment(['title' => 'The Legend of Zelda'])
-                 ->assertJsonStructure([
-                     'id',
-                     'title',
-                     'description',
-                     'genre',
-                     'platform',
-                     'created_at',
-                     'updated_at'
-                 ]);
+            ->assertJsonFragment(['title' => 'The Legend of Zelda'])
+            ->assertJsonStructure([
+                'id',
+                'title',
+                'description',
+                'genre',
+                'platform',
+                'created_at',
+                'updated_at',
+            ]);
 
         // Verificar que está en la base de datos
         $this->assertDatabaseHas('games', [
             'title' => 'The Legend of Zelda',
-            'genre' => 'Adventure'
+            'genre' => 'Adventure',
         ]);
     }
 
@@ -67,7 +67,7 @@ class GameTest extends TestCase
         $response = $this->postJson('/api/games', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['title', 'description', 'genre', 'platform']);
+            ->assertJsonValidationErrors(['title', 'description', 'genre', 'platform']);
     }
 
     /**
@@ -83,11 +83,11 @@ class GameTest extends TestCase
             'title' => 'Duplicate Game',
             'description' => 'Test description',
             'genre' => 'Action',
-            'platform' => 'PC'
+            'platform' => 'PC',
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['title']);
+            ->assertJsonValidationErrors(['title']);
     }
 
     /**
@@ -96,16 +96,16 @@ class GameTest extends TestCase
     public function test_can_show_single_game(): void
     {
         $game = Game::factory()->create([
-            'title' => 'Test Game'
+            'title' => 'Test Game',
         ]);
 
         $response = $this->getJson("/api/games/{$game->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'id' => $game->id,
-                     'title' => 'Test Game'
-                 ]);
+            ->assertJson([
+                'id' => $game->id,
+                'title' => 'Test Game',
+            ]);
     }
 
     /**
@@ -124,24 +124,24 @@ class GameTest extends TestCase
     public function test_can_update_game(): void
     {
         $game = Game::factory()->create([
-            'title' => 'Original Title'
+            'title' => 'Original Title',
         ]);
 
         $updateData = [
             'title' => 'Updated Title',
-            'genre' => 'RPG'
+            'genre' => 'RPG',
         ];
 
         $response = $this->putJson("/api/games/{$game->id}", $updateData);
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['title' => 'Updated Title']);
+            ->assertJsonFragment(['title' => 'Updated Title']);
 
         // Verificar en base de datos
         $this->assertDatabaseHas('games', [
             'id' => $game->id,
             'title' => 'Updated Title',
-            'genre' => 'RPG'
+            'genre' => 'RPG',
         ]);
     }
 
@@ -155,7 +155,7 @@ class GameTest extends TestCase
         $response = $this->deleteJson("/api/games/{$game->id}");
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Juego eliminado correctamente']);
+            ->assertJson(['message' => 'Juego eliminado correctamente']);
 
         // Verificar que fue eliminado
         $this->assertDatabaseMissing('games', ['id' => $game->id]);
@@ -169,6 +169,6 @@ class GameTest extends TestCase
         $response = $this->getJson('/api/games');
 
         $response->assertStatus(200)
-                 ->assertJson([]);
+            ->assertJson([]);
     }
 }

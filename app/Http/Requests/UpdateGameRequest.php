@@ -28,7 +28,7 @@ class UpdateGameRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('games', 'title')->ignore($this->route('game'))
+                Rule::unique('games', 'title')->ignore($this->route('game')),
             ],
             'description' => 'sometimes|required|string|max:1000',
             'genre' => 'sometimes|required|string|max:100',

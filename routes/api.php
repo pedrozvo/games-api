@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\GameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\GameController;
 
 Route::apiResource('games', GameController::class);
 
