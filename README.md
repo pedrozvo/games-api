@@ -3,6 +3,7 @@
 API REST desarrollada con Laravel para la gestión de videojuegos con CI/CD automatizado.
 
 ![Laravel CI/CD](https://github.com/pedrozvo/games-api/workflows/Laravel%20CI/CD/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=games-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=games-api)
 
 ## 📋 Descripción
 
@@ -14,6 +15,8 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 - ✅ CI/CD con GitHub Actions
 - ✅ Factory para generación de datos de prueba
 - ✅ Documentación completa con Postman
+- ✅ Análisis estático con PHPStan/Larastan
+- ✅ Análisis de calidad con SonarQube/SonarCloud
 
 ## 🛠️ Tecnologías
 
@@ -23,6 +26,8 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 - **PHPUnit**: ^11.5 (Testing)
 - **SQLite/MySQL**: Base de datos configurable
 - **GitHub Actions**: CI/CD automatizado
+- **PHPStan/Larastan**: ^3.8 (Análisis estático)
+- **SonarQube**: Análisis de calidad de código
 
 ## 📦 Requisitos Previos
 
@@ -177,6 +182,46 @@ curl -X POST http://localhost:8000/api/games \
   "updated_at": "2025-12-11T10:30:00.000000Z"
 }
 ```
+
+## 🔍 Análisis de Calidad de Código
+
+### PHPStan - Análisis Estático
+
+PHPStan analiza el código sin ejecutarlo para encontrar errores de tipos, métodos inexistentes, y problemas de lógica.
+
+```bash
+# Ejecutar análisis
+composer phpstan
+
+# Generar baseline (ignorar errores existentes)
+composer phpstan-baseline
+```
+
+Ver [PHPSTAN.md](PHPSTAN.md) para más detalles.
+
+### SonarQube - Métricas de Calidad
+
+SonarQube proporciona análisis completo de calidad, detectando bugs, vulnerabilidades, code smells y métricas.
+
+#### Opción 1: SonarCloud (En la nube)
+1. Registrarse en [sonarcloud.io](https://sonarcloud.io)
+2. Conectar el repositorio de GitHub
+3. Agregar `SONAR_TOKEN` en GitHub Secrets
+4. Los análisis se ejecutan automáticamente con cada push
+
+#### Opción 2: SonarQube Local (Con Docker)
+```bash
+# Levantar SonarQube
+docker-compose -f docker-compose.sonar.yml up -d
+
+# Acceder a http://localhost:9000
+# Usuario: admin / Contraseña: admin
+
+# Ejecutar análisis
+sonar-scanner -Dsonar.login=TU_TOKEN
+```
+
+Ver [SONARQUBE.md](SONARQUBE.md) para instrucciones completas.
 
 ## 🧪 Testing
 
