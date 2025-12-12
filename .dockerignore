@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Git
 .git
 .gitignore
@@ -42,3 +43,13 @@ phpunit.xml
 # Documentation
 README.md
 
+=======
+.git
+.env
+vendor
+node_modules
+storage/*.key
+tests
+phpunit.xml
+README.md
+>>>>>>> 2f41206dbc20f05e68753f88e81b51aa89a8ffd2

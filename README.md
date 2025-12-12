@@ -1,17 +1,28 @@
-# 🎮 Games API
+# 🎮 Games API - Laravel
 
-API REST desarrollada con Laravel para la gestión de videojuegos.
+API REST desarrollada con Laravel para la gestión de videojuegos con CI/CD automatizado.
+
+![Laravel CI/CD](https://github.com/pedrozvo/games-api/workflows/Laravel%20CI/CD/badge.svg)
 
 ## 📋 Descripción
 
-Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints para crear y listar juegos con información como título, descripción, género y plataforma.
+Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints completos para crear, listar, actualizar y eliminar juegos. El proyecto incluye:
+
+- ✅ CRUD completo de juegos
+- ✅ Validaciones robustas con FormRequests
+- ✅ Tests automatizados (Unit y Feature)
+- ✅ CI/CD con GitHub Actions
+- ✅ Factory para generación de datos de prueba
+- ✅ Documentación completa con Postman
 
 ## 🛠️ Tecnologías
 
 - **PHP**: ^8.2
 - **Laravel**: ^12.0
 - **Laravel Sanctum**: ^4.0 (Autenticación API)
-- **Base de datos**: SQLite/MySQL (configurable)
+- **PHPUnit**: ^11.5 (Testing)
+- **SQLite/MySQL**: Base de datos configurable
+- **GitHub Actions**: CI/CD automatizado
 
 ## 📦 Requisitos Previos
 
@@ -22,27 +33,46 @@ Esta API permite gestionar un catálogo de videojuegos, proporcionando endpoints
 ### Opción 2: Sin Docker
 - PHP 8.2 o superior
 - Composer
-- Node.js y NPM
-- Base de datos (SQLite, MySQL, PostgreSQL, etc.)
+- Node.js y NPM (opcional para frontend)
+- SQLite o MySQL
+- Git
 
 ## 🚀 Instalación Local (sin Docker)
 
 Si prefieres usar Docker, ve a la sección [🐳 Instalación con Docker](#-instalación-con-docker-recomendado).
 
-### 1. Clonar el repositorio
+### Opción A: Con Docker (Recomendado) 🐳
 
 ```bash
-git clone <url-del-repositorio>
+# 1. Clonar el repositorio
+git clone https://github.com/pedrozvo/games-api.git
+cd games-api
+
+# 2. Levantar con Docker Compose
+docker-compose up -d
+
+# 3. La API estará disponible en:
+# http://localhost:8080/api/games
+```
+
+Ver [DOCKER.md](DOCKER.md) para más detalles.
+
+### Opción B: Instalación Local
+
+#### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/pedrozvo/games-api.git
 cd games-api
 ```
 
-### 2. Instalación automática
+#### 2. Instalación automática
 
 ```bash
 composer setup
 ```
 
-Este comando ejecutará:
+Este comando ejecutará automáticamente:
 - Instalación de dependencias de Composer
 - Copia del archivo `.env.example` a `.env`
 - Generación de la clave de aplicación
@@ -50,11 +80,274 @@ Este comando ejecutará:
 - Instalación de dependencias de NPM
 - Compilación de assets
 
-### 3. Configuración manual (alternativa)
+#### 3. Instalación manual (alternativa)
 
 ```bash
-# Instalar dependencias
+# Instalar dependencias de PHP
 composer install
+
+# Copiar archivo de entorno
+cp .env.example .env
+
+# Generar clave de aplicación
+php artisan key:generate
+
+# Crear base de datos SQLite
+touch database/database.sqlite
+
+# Ejecutar migraciones
+php artisan migrate
+
+# Instalar dependencias de Node (opcional)
+npm install
+npm run build
+```
+
+## 🎯 Uso
+
+### Con Docker
+
+```bash
+# Levantar servicios
+docker-compose up -d
+
+# Ver logs
+docker-compose logs -f app
+
+# Detener servicios
+docker-compose down
+```
+
+### Local
+
+#### Iniciar el servidor de desarrollo
+
+```bash
+php artisan serve
+```
+
+El servidor estará disponible en `http://localhost:8000`
+
+#### Ejecutar en modo desarrollo con watch
+
+```bash
+composer dev
+```
+
+Esto iniciará simultáneamente:
+- Servidor Laravel
+- Queue listener
+- Pail (logs en tiempo real)
+- Vite (compilación de assets)
+
+## 📚 Endpoints de la API
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/games` | Listar todos los juegos |
+| GET | `/api/games/{id}` | Obtener un juego específico |
+| POST | `/api/games` | Crear un nuevo juego |
+| PUT | `/api/games/{id}` | Actualizar un juego existente |
+| DELETE | `/api/games/{id}` | Eliminar un juego |
+
+### Ejemplo de petición POST
+
+```bash
+curl -X POST http://localhost:8000/api/games \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "title": "The Legend of Zelda",
+    "description": "Epic adventure game",
+    "genre": "Adventure",
+    "platform": "Nintendo Switch"
+  }'
+```
+
+### Respuesta exitosa (201 Created)
+
+```json
+{
+  "id": 1,
+  "title": "The Legend of Zelda",
+  "description": "Epic adventure game",
+  "genre": "Adventure",
+  "platform": "Nintendo Switch",
+  "created_at": "2025-12-11T10:30:00.000000Z",
+  "updated_at": "2025-12-11T10:30:00.000000Z"
+}
+```
+
+## 🧪 Testing
+
+### Con Docker
+
+```bash
+# Ejecutar todos los tests
+docker-compose exec app php artisan test
+
+# Con cobertura
+docker-compose exec app php artisan test --coverage
+
+# Tests específicos
+docker-compose exec app php artisan test --filter GameTest
+```
+
+### Local
+
+#### Ejecutar todos los tests
+
+```bash
+php artisan test
+```
+
+#### Ejecutar tests con cobertura
+
+```bash
+php artisan test --coverage
+```
+
+#### Ejecutar tests específicos
+
+```bash
+php artisan test --filter GameTest
+```
+
+### Tests incluidos
+
+- ✅ Test de listado de juegos
+- ✅ Test de creación de juegos
+- ✅ Test de validaciones
+- ✅ Test de actualización
+- ✅ Test de eliminación
+- ✅ Test de búsqueda por ID
+- ✅ Test de errores 404
+
+## 🔄 CI/CD
+
+El proyecto incluye GitHub Actions configurado para:
+
+- ✅ Ejecutar tests automáticamente en cada push
+- ✅ Verificar calidad de código con Laravel Pint
+- ✅ Ejecutar migraciones en entorno de testing
+- ✅ Generar reportes de tests
+
+### Workflow
+
+Los tests se ejecutan automáticamente cuando:
+- Se hace push a las ramas `main` o `develop`
+- Se crea un Pull Request hacia `main`
+
+## 📮 Colección de Postman
+
+El proyecto incluye una colección completa de Postman (`Games-API.postman_collection.json`) con todos los endpoints configurados.
+
+### Importar en Postman
+
+1. Abre Postman
+2. Click en "Import"
+3. Selecciona el archivo `Games-API.postman_collection.json`
+4. Configura la variable `base_url` a `http://localhost:8000`
+
+## 🗂️ Estructura del Proyecto
+
+```
+games-api/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── Api/
+│   │   │       └── GameController.php
+│   │   └── Requests/
+│   │       ├── StoreGameRequest.php
+│   │       └── UpdateGameRequest.php
+│   └── Models/
+│       └── Game.php
+├── database/
+│   ├── factories/
+│   │   └── GameFactory.php
+│   └── migrations/
+│       └── 2025_11_30_191417_create_games_table.php
+├── tests/
+│   └── Feature/
+│       └── Api/
+│           └── GameTest.php
+├── docker/
+│   ├── nginx.conf           ← Configuración Nginx
+│   ├── supervisord.conf     ← Configuración Supervisor
+│   └── start.sh             ← Script de inicio
+├── .github/
+│   └── workflows/
+│       └── laravel.yml      ← CI/CD Pipeline
+├── routes/
+│   └── api.php
+├── Dockerfile               ← Imagen Docker
+├── docker-compose.yml       ← Orquestación de servicios
+└── DOCKER.md                ← Documentación Docker
+```
+
+## 🔐 Validaciones
+
+### Crear Juego (POST)
+
+- `title`: Requerido, máximo 255 caracteres, único
+- `description`: Requerido, máximo 1000 caracteres
+- `genre`: Requerido, máximo 100 caracteres
+- `platform`: Requerido, máximo 100 caracteres
+
+### Actualizar Juego (PUT)
+
+- `title`: Opcional, máximo 255 caracteres, único (ignorando el mismo juego)
+- `description`: Opcional, máximo 1000 caracteres
+- `genre`: Opcional, máximo 100 caracteres
+- `platform`: Opcional, máximo 100 caracteres
+
+## 🐛 Solución de Problemas
+
+### Error: "Class GameFactory not found"
+
+```bash
+composer dump-autoload
+```
+
+### Error en migraciones
+
+```bash
+php artisan migrate:fresh
+```
+
+### Limpiar caché
+
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+```
+
+## 📝 Licencia
+
+Este proyecto está bajo la licencia MIT.
+
+## 👥 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📧 Contacto
+
+- **Autor**: Pedro ZVO
+- **GitHub**: [@pedrozvo](https://github.com/pedrozvo)
+- **Repositorio**: [games-api](https://github.com/pedrozvo/games-api)
+
+---
+
+⭐ **¡Si te gusta este proyecto, dale una estrella en GitHub!** ⭐
+
 npm install
 
 # Configurar entorno

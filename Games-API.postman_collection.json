@@ -1,0 +1,168 @@
+{
+  "info": {
+    "_postman_id": "games-api-collection",
+    "name": "Games API",
+    "description": "Colección de API para gestionar juegos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Games",
+      "item": [
+        {
+          "name": "Get All Games",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/games",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "games"
+              ]
+            },
+            "description": "Obtiene la lista de todos los juegos registrados"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Game by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/games/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "games",
+                "1"
+              ]
+            },
+            "description": "Obtiene un juego específico por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Game",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Legend of Zelda\",\n  \"description\": \"An epic adventure game with a compelling storyline\",\n  \"genre\": \"Adventure\",\n  \"platform\": \"Nintendo Switch\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/games",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "games"
+              ]
+            },
+            "description": "Crea un nuevo juego en la base de datos"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Game",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Legend of Zelda: Breath of the Wild\",\n  \"description\": \"An epic open-world adventure game\",\n  \"genre\": \"Action Adventure\",\n  \"platform\": \"Nintendo Switch\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/games/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "games",
+                "1"
+              ]
+            },
+            "description": "Actualiza un juego existente"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Game",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/games/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "games",
+                "1"
+              ]
+            },
+            "description": "Elimina un juego específico"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost",
+      "type": "string"
+    }
+  ]
+}
