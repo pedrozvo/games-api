@@ -1,6 +1,7 @@
 name: Laravel CI/CD Pipeline
 
 # ESTA ES LA SECCIÓN QUE TE FALTABA O ESTABA MAL
+#test para github actions
 on:
   push:
     branches:
